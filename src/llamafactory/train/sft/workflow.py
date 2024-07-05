@@ -73,7 +73,9 @@ def run_sft(
         finetuning_args=finetuning_args,
         data_collator=data_collator,
         callbacks=callbacks,
-        compute_metrics=ComputeMetrics(tokenizer) if training_args.predict_with_generate else compute_accuracy,
+        # compute_metrics=ComputeMetrics(tokenizer) if training_args.predict_with_generate else compute_accuracy,
+        # refer to: https://github.com/hiyouga/LLaMA-Factory/issues/4181
+        compute_metrics=ComputeMetrics(tokenizer),
         preprocess_logits_for_metrics=None if training_args.predict_with_generate else eval_logit_processor,
         **tokenizer_module,
         **split_dataset(dataset, data_args, training_args),

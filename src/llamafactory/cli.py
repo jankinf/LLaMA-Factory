@@ -91,21 +91,21 @@ def main():
             master_addr = os.environ.get("MASTER_ADDR", "127.0.0.1")
             master_port = os.environ.get("MASTER_PORT", str(random.randint(20001, 29999)))
             logger.info("Initializing distributed tasks at: {}:{}".format(master_addr, master_port))
-            process = subprocess.run(
-                (
-                    "torchrun --nnodes {nnodes} --node_rank {node_rank} --nproc_per_node {nproc_per_node} "
-                    "--master_addr {master_addr} --master_port {master_port} {file_name} {args}"
-                ).format(
-                    nnodes=os.environ.get("NNODES", "1"),
-                    node_rank=os.environ.get("RANK", "0"),
-                    nproc_per_node=os.environ.get("NPROC_PER_NODE", str(get_device_count())),
-                    master_addr=master_addr,
-                    master_port=master_port,
-                    file_name=launcher.__file__,
-                    args=" ".join(sys.argv[1:]),
-                ),
-                shell=True,
+            cmd = (
+                "CUDA_VISIBLE_DEVICES={cuda_device} torchrun --nnodes {nnodes} --node_rank {node_rank} --nproc_per_node {nproc_per_node} "
+                "--master_addr {master_addr} --master_port {master_port} {file_name} {args}"
+            ).format(
+                cuda_device=os.environ.get("CUDA_VISIBLE_DEVICES", "0"),
+                nnodes=os.environ.get("NNODES", "1"),
+                node_rank=os.environ.get("RANK", "0"),
+                nproc_per_node=os.environ.get("NPROC_PER_NODE", str(get_device_count())),
+                master_addr=master_addr,
+                master_port=master_port,
+                file_name=launcher.__file__,
+                args=" ".join(sys.argv[1:]),
             )
+            print(cmd)
+            process = subprocess.run(cmd, shell=True)
             sys.exit(process.returncode)
         else:
             run_exp()

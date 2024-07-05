@@ -1,0 +1,3 @@
+CUDA_VISIBLE_DEVICES=0 NPROC_PER_NODE=1 llamafactory-cli train examples/train_lora/llava1_5_lora_sft.yaml
+CUDA_VISIBLE_DEVICES=0 llamafactory-cli chat examples/inference/llava1_5_lora_sft.yaml
+CUDA_VISIBLE_DEVICES=0 llamafactory-cli export examples/merge_lora/llava1_5_lora_sft.yaml
